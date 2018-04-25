@@ -1,0 +1,29 @@
+{
+  "name": "aws-rekognition-photo-handler",
+  "version": "0.1.0",
+  "description": "Intelligent image processing solution, including create photo thumbnail, photo detect labels, photo detect faces etc. Using AWS Rekognition service, and can build as a Lambda invoked by S3 Notification.",
+  "main": "index.js",
+  "keywords": [
+    "aws",
+    "rekognition",
+    "photo",
+    "lambda",
+    "thumbnail",
+    "face-detect",
+    "label-detect"
+  ],
+  "author": "David Wang 王元恺 <david.wang@finishy.cn>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.0",
+    "aws-sdk": "^2.228.1",
+    "elasticsearch": "^14.2.2",
+    "gm": "^1.23.1",
+    "http-aws-es": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finishy1995/aws-rekognition-photo-handler.git"
+  },
+  "homepage": "https://github.com/finishy1995/aws-rekognition-photo-handler.git"
+}
