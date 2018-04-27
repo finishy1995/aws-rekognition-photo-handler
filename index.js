@@ -13,12 +13,7 @@ var s3 = new AWS.S3();
 var rekognition = new AWS.Rekognition();
 var dataClient = new DataClient();
 
-dataClient.hostsConfig([ '<YOUR_HOST_ID>' ]);
-dataClient.awsConfig({
-  accessKeyId: '<YOUR_ACCESS_KEY>',
-  secretAccessKey: '<YOUR_SECRET_KEY>',
-  region: '<YOUR_HOST_REGION>'
-});
+dataClient.hostsConfig([ '<YOUR_ENDPOINT>' ]);
 
 // Transfer array to string.
 function arrayToString(arr) {
@@ -62,7 +57,7 @@ function eventCheck(srcBucket, srcKey, dstBucket, callback) {
     return false;
   }
   var imageType = typeMatch[1];
-  if (imageType != "jpg" && imageType != "png" && imageType != "jpeg" && imageType != "bmp" && imageType != "tif") {
+  if (imageType != "jpg" && imageType != "png" && imageType != "jpeg") {
     callback('Unsupported image type: ' + imageType);
     return false;
   }
@@ -154,25 +149,29 @@ function eventHandle(srcBucket, srcKey, dstBucket, dstKey, callback) {
       
       callback(err);
     } else {
-      var labels = [];
-      for (var i=0; i<results[1].Labels.length; i++)
-        labels.push([results[1].Labels[i].Name, Math.round(results[1].Labels[i].Confidence * 100) / 100]);
+      var labels = {};
+      var labelsIndex = [];
+      for (var i=0; i<results[1].Labels.length; i++) {
+        labels[results[1].Labels[i].Name] = Math.round(results[1].Labels[i].Confidence * 100) / 100;
+        labelsIndex.push(results[1].Labels[i].Name);
+      }
   
-      dataClient.insert('photos', 'test', srcKey.replace(/\//g, '-'), {
+      dataClient.insertPhoto('test', srcKey.replace(/\//g, '-'), {
         photo_key: srcKey,
         thumbnail_key: dstKey,
-        tags: arrayToString(labels)
+        tags: labels,
+        tagsIndex: labelsIndex
       }, function (error, response) {
         if (error) {
           deletePhoto(dstBucket, dstKey);
           deletePhoto(srcBucket, srcKey);
           
           callback(error);
+        } else {
+          callback(null, response);
         }
       });
     }
-
-    callback(null, "message");
   });
 }
 
