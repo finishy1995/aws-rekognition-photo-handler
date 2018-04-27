@@ -167,8 +167,6 @@ function eventHandle(srcBucket, srcKey, dstBucket, dstKey, callback) {
           deletePhoto(srcBucket, srcKey);
           
           callback(error);
-        } else {
-          callback(null, response);
         }
       });
     }

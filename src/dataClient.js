@@ -83,17 +83,20 @@ class Client {
   }
   
   insertPhoto(user, id, data, callback) {
+    var responses = [];
+    
     function errorHandle(error, response) {
-      if (error) {
-        callback(error);
+      responses.push(responses);
+      if ((responses.length == 3) || (error)) {
+        callback(error, {response: responses});
       }
     }
     
     this.insert('photos', user, id, data, errorHandle);
     this.select('photos', user, 'indexs', ['tagsIndex'], function (error, response, caller) {
-      if (error)
-        callback(error);
-      else {
+      errorHandle(error, response);
+      
+      if (!error) {
         var tagsIndex = new Set(response['tagsIndex']);
         var newIndex = [];
         for (var i=0; i<data['tagsIndex'].length; i++)
@@ -105,8 +108,8 @@ class Client {
         
         caller.update('photos', user, 'indexs', {
           'tagsIndex': newIndex
-        }, function (error, response) {
-          callback(error, response);
+        }, function (err, res) {
+          errorHandle(err, res);
         });
       }
     }, this);
